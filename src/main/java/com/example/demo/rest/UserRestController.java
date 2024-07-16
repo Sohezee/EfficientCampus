@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -50,6 +51,23 @@ public class UserRestController {
         }
         userService.deleteById(user.getId());
         return "Deleted user id - " + id;
+    }
+
+    @PostMapping("/users/login")
+    public User login(@RequestBody Map<String, String> credentials) {
+        String email = credentials.get("email");
+        String password = credentials.get("password");
+
+        if (email == null || password == null) {
+            throw new InvalidCredentialsException("Email and password must be provided");
+        }
+
+        User foundUser = userService.findByEmail(email);
+        if (foundUser == null || !foundUser.getPassword().equals(password)) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        } else {
+            return foundUser;
+        }
     }
 }
 

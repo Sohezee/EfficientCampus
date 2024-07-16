@@ -10,6 +10,7 @@ public interface UserService {
 
     User findById(int id);
 
+    User findByEmail(String email);
 
     User saveUser(User user);
 
