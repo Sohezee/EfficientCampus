@@ -1,0 +1,29 @@
+<configuration>
+    <springProperty scope="context" name="smtpPassword" source="smtp.password"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>smtp.sendgrid.net</smtpHost>
+        <smtpPort>587</smtpPort>
+        <username>apikey</username>
+        <password>${smtpPassword}</password>
+        <to>svij024@gmail.com</to>
+        <from>sohamsvij@gmail.com</from>
+        <subject>Logback Log - %logger{20} - %m</subject>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date %-5level %logger{35} - %message%n</pattern>
+        </layout>
+        <smtp>
+            <STARTTLS>true</STARTTLS>
+        </smtp>
+    </appender>
+    <root level="error">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="EMAIL" />
+    </root>
+</configuration>
