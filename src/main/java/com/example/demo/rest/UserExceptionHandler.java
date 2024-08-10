@@ -19,6 +19,18 @@ public class UserExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<UserErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException exc) {
+        UserErrorResponse error = new UserErrorResponse();
+
+        error.setStatus(HttpStatus.UNAUTHORIZED.value());
+        error.setMessage(exc.getMessage());
+        error.setTimestamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+
     @ExceptionHandler
     public ResponseEntity<UserErrorResponse> handleException(Exception exc) {
         UserErrorResponse error = new UserErrorResponse();

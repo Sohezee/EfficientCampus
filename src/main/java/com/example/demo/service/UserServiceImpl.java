@@ -4,7 +4,6 @@ import com.example.demo.dao.UserRepository;
 import com.example.demo.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +36,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public User findById(int id) {
         Optional<User> result = userRepository.findById(id);
-        User user = null;
+        User user;
         if (result.isPresent()) user = result.get();
         else throw new RuntimeException("User not found of id " + id);
         return user;
