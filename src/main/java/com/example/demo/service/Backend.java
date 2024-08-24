@@ -42,13 +42,20 @@ public class Backend {
     @Scheduled(cron = "0 1 0 * * ?", zone = "America/Chicago")
     public void signUpUsers() {
         List<User> users = userRepository.findAll();
+        List<User> failed = new ArrayList<>();
         for(User user: users) {
-            signUpAll(user);
+            if (!signUpAll(user,3)) failed.add(user);
+        }
+        for(User user: failed) {
+            if (!signUpAll(user,10)) eventLogger.logException("CRITICAL FAILURE: " + user.getEmail() + " NOT SIGNED UP");
         }
     }
 
-    public void signUpAll(User user) {
-        Page page = browser.pageSetup(user.getEmail(), user.getPassword());
+    // Boolean does NOT represent successful execution of method, but rather more simply successful page setup
+    public boolean signUpAll(User user, int attempts) {
+        Page page = browser.pageSetup(user.getEmail(), user.getPassword(),attempts);
+        if(page == null) return false;
+
         ArrayList<Cookie> cookies = new ArrayList<>(page.context().cookies());
 
         StringBuilder cookiesStr = new StringBuilder();
@@ -80,6 +87,9 @@ public class Backend {
             for (int i = 0; i < responsiveSessions.length(); i++) {
                 Selection selection = responsiveSessions.getJSONObject(i).getString("sessionName").charAt(6) == '1' ?
                         new Selection(user.getOfferingNameOne(), user.getTeacherDisplayOne()) : new Selection(user.getOfferingNameTwo(), user.getTeacherDisplayTwo());
+
+                if (selection.getOfferingName().isEmpty()) continue;
+
                 JSONArray offeringsArray = responsiveSessions.getJSONObject(i).getJSONArray("offerings");
                 if (!responsiveSessions.getJSONObject(i).getBoolean("sessionOpen")) continue;
                 int offeringID = -1; //Will hold ID of session chosen by user
@@ -100,11 +110,11 @@ public class Backend {
                 if (offeringID == -1) System.out.println("Responsive Offering Not Found"); //Replace with something better
                 else signUp(user.getEmail(), responsiveSessions.getJSONObject(i).getInt("responsiveSessionID"), offeringID, cookiesStr.toString());
             }
-
         }
         catch (Exception e) {
             eventLogger.logException(e);
         }
+        return true;
     }
 
     public boolean signUp(String userEmail, int sessionID, int offeringID, String cookies) {

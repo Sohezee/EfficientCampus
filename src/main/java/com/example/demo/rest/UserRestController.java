@@ -90,14 +90,18 @@ public class UserRestController {
     public boolean verify(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
+        int attempts = 1;
+        if (credentials.get("attempts") != null) attempts = Integer.parseInt(credentials.get("attempts"));
 
         if (email == null || password == null) {
             throw new InvalidCredentialsException("Email and password must be provided");
         }
-
-        try (BrowserManager browser = new BrowserManager(false)) {
-            return browser.pageSetup(email, password) != null;
+        for (int i = 0; i < attempts; i++) {
+            try (BrowserManager browser = new BrowserManager(true)) {
+                if (browser.pageSetup(email, password) != null) return true;
+            }
         }
+        return false;
     }
 }
 

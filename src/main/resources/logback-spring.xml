@@ -22,12 +22,14 @@
             <STARTTLS>true</STARTTLS>
         </smtp>
     </appender>
+    <!--
     <logger name="com.example.demo" level="info" additivity="false">
         <appender-ref ref="CONSOLE" />
-        <!-- <appender-ref ref="EMAIL" /> -->
+        <appender-ref ref="EMAIL" />
     </logger>
+    -->
     <root level="error">
         <appender-ref ref="CONSOLE" />
-        <!--<appender-ref ref="EMAIL" /> -->
+        <appender-ref ref="EMAIL" />
     </root>
 </configuration>

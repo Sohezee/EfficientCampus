@@ -21,6 +21,14 @@ public class BrowserManager implements AutoCloseable  {
         this.browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(isHeadless));
     }
 
+    public synchronized Page pageSetup(String userEmail, String userPassword, int attempts) {
+        for (int i = 0; i < attempts; i++) {
+            Page page = pageSetup(userEmail, userPassword);
+            if (page != null) return page;
+        }
+        return null;
+    }
+
     public synchronized Page pageSetup(String userEmail, String userPassword) {
         try {
             Page page = browser.newPage();
@@ -32,13 +40,13 @@ public class BrowserManager implements AutoCloseable  {
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Next")).click();
 
             // Possibly risky
-            //page.waitForURL(Pattern.compile("https:\\/\\/accounts\\.google\\.com\\/v\\d+\\/signin\\/challenge\\/(pwd|identifier)\\?.*"), new Page.WaitForURLOptions().setTimeout(26000));
+            //page.waitForURL(Pattern.compile("https:\\/\\/accounts\\.google\\.com\\/v\\d+\\/signin\\/challenge\\/(pwd|identifier)\\?.*"), new Page.WaitForURLOptions().setTimeout(30000));
             page.waitForLoadState(LoadState.NETWORKIDLE);
 
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Enter your password")).fill(userPassword);
             page.waitForLoadState(LoadState.NETWORKIDLE);
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(Pattern.compile("Sign in|Next"))).click();
-            page.waitForURL(Pattern.compile("https://rockwoodmo\\.infinitecampus\\.org/campus/nav-wrapper/student/portal/student/home.*"), new Page.WaitForURLOptions().setTimeout(25000));
+            page.waitForURL(Pattern.compile("https://rockwoodmo\\.infinitecampus\\.org/campus/nav-wrapper/student/portal/student/home.*"), new Page.WaitForURLOptions().setTimeout(30000));
             return page;
 
         }
