@@ -1,0 +1,34 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1fe32ecc.css",
+    "main.js": "/static/js/main.5ed842b7.js",
+    "static/js/453.b48aee4d.chunk.js": "/static/js/453.b48aee4d.chunk.js",
+    "static/media/fontawesome-webfont.svg?v=4.7.0": "/static/media/fontawesome-webfont.c1e38fd9e0e74ba58f7a.svg",
+    "static/media/Roboto-Regular.ttf": "/static/media/Roboto-Regular.fc2b5060f7accec5cf74.ttf",
+    "static/media/fontawesome-webfont.eot": "/static/media/fontawesome-webfont.8b43027f47b20503057d.eot",
+    "static/media/fontawesome-webfont.ttf?v=4.7.0": "/static/media/fontawesome-webfont.1e59d2330b4c6deb84b3.ttf",
+    "static/media/Poppins-Regular.ttf": "/static/media/Poppins-Regular.1c701c9a6b587802e3d0.ttf",
+    "static/media/Poppins-Medium.ttf": "/static/media/Poppins-Medium.b59f6a636397975c5409.ttf",
+    "static/media/Poppins-SemiBold.ttf": "/static/media/Poppins-SemiBold.5981b450a68d5134225b.ttf",
+    "static/media/Poppins-Bold.ttf": "/static/media/Poppins-Bold.e2abc8f5e9a67ea669ea.ttf",
+    "static/media/Material-Design-Iconic-Font.ttf?v=2.2.0": "/static/media/Material-Design-Iconic-Font.5a588d6a8bfc41d69f88.ttf",
+    "static/media/fontawesome-webfont.woff?v=4.7.0": "/static/media/fontawesome-webfont.f691f37e57f04c152e23.woff",
+    "static/media/fontawesome-webfont.woff2?v=4.7.0": "/static/media/fontawesome-webfont.20fd1704ea223900efa9.woff2",
+    "static/media/Material-Design-Iconic-Font.woff?v=2.2.0": "/static/media/Material-Design-Iconic-Font.bd9b02bf1131d90bfe22.woff",
+    "static/media/Material-Design-Iconic-Font.woff2?v=2.2.0": "/static/media/Material-Design-Iconic-Font.6ee80f4bf5d3f92f3bf7.woff2",
+    "static/media/Electron-Pulse-Italic.otf": "/static/media/Electron-Pulse-Italic.7b05df18da76d5398df2.otf",
+    "static/media/Electron-Pulse-Italic.ttf": "/static/media/Electron-Pulse-Italic.fa68f0a777039578cff3.ttf",
+    "static/media/Electron-Pulse.otf": "/static/media/Electron-Pulse.ebe056f78e246c0a0c32.otf",
+    "static/media/Electron-Pulse.ttf": "/static/media/Electron-Pulse.ff92d2b16ec391688426.ttf",
+    "static/media/help.svg": "/static/media/help.4143c026bfede87fbc46754852a007cd.svg",
+    "static/media/logo.svg": "/static/media/logo.8bf776ad6349d93c5dca627c64296833.svg",
+    "index.html": "/index.html",
+    "main.1fe32ecc.css.map": "/static/css/main.1fe32ecc.css.map",
+    "main.5ed842b7.js.map": "/static/js/main.5ed842b7.js.map",
+    "453.b48aee4d.chunk.js.map": "/static/js/453.b48aee4d.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1fe32ecc.css",
+    "static/js/main.5ed842b7.js"
+  ]
+}
