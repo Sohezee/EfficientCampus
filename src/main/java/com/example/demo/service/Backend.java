@@ -29,14 +29,16 @@ import java.util.Objects;
 @EnableScheduling
 @Service
 public class Backend {
+    private final EncryptionService encryptionService;
     BrowserManager browser = new BrowserManager();
     EventLogger eventLogger = new EventLogger(Backend.class);
 
     private UserRepository userRepository;
 
     @Autowired
-    public Backend(UserRepository userRepository) {
+    public Backend(UserRepository userRepository, EncryptionService encryptionService) {
         this.userRepository = userRepository;
+        this.encryptionService = encryptionService;
     }
 
     @Scheduled(cron = "0 1 0 * * ?", zone = "America/Chicago")
@@ -53,7 +55,7 @@ public class Backend {
 
     // Boolean does NOT represent successful execution of method, but rather more simply successful page setup
     public boolean signUpAll(User user, int attempts) {
-        Page page = browser.pageSetup(user.getEmail(), user.getPassword(),attempts);
+        Page page = browser.pageSetup(user.getEmail(), encryptionService.decrypt(user.getPassword()),attempts);
         if(page == null) return false;
 
         ArrayList<Cookie> cookies = new ArrayList<>(page.context().cookies());

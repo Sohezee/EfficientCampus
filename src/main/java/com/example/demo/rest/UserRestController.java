@@ -1,6 +1,7 @@
 package com.example.demo.rest;
 
 import com.example.demo.entity.User;
+import com.example.demo.service.EncryptionService;
 import com.example.demo.service.UserService;
 import com.example.demo.util.BrowserManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,12 @@ import java.util.Map;
 public class UserRestController {
 
     private UserService userService;
+    private final EncryptionService encryptionService;
 
     @Autowired
-    public UserRestController(UserService userService) {
+    public UserRestController(UserService userService, EncryptionService encryptionService) {
         this.userService = userService;
+        this.encryptionService = encryptionService;
     }
 
     @GetMapping("/users")
@@ -38,11 +41,15 @@ public class UserRestController {
     public User addUser(@RequestBody User user) {
         if(userService.findAll().stream().anyMatch(dbUser -> dbUser.getEmail().equals(user.getEmail()))) throw new EmailExistsException(user.getEmail());
         user.setId(0);
+        user.setPassword(encryptionService.encrypt(user.getPassword()));
         return userService.saveUser(user);
     }
 
     @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {return userService.saveUser(user);}
+    public User updateUser(@RequestBody User user) {
+        user.setPassword(encryptionService.encrypt(user.getPassword()));
+        return userService.saveUser(user);
+    }
 
     @DeleteMapping("/users/{id}")
     public String deleteById(@PathVariable int id) {
@@ -79,9 +86,10 @@ public class UserRestController {
         if(foundUser == null) {
             throw new UnregisteredUserException();
         }
-        else if (!foundUser.getPassword().equals(password)) {
+        else if (!foundUser.getPassword().equals(encryptionService.encrypt(password))) {
             throw new InvalidCredentialsException("Invalid email or password");
         } else {
+            foundUser.setPassword(encryptionService.decrypt(foundUser.getPassword()));
             return foundUser;
         }
     }
