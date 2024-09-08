@@ -62,13 +62,23 @@ public class Backend {
 
         StringBuilder cookiesStr = new StringBuilder();
 
+        // Grabs all cookies to be safe
         for (Cookie cookie : cookies) {
-            if (cookie.name.equals("JSESSIONID") || cookie.name.equals("sis-cookie")) cookiesStr.append(cookie.name).append("=").append(cookie.value).append("; ");
-            else if (cookie.name.equals("appName")) {
+            cookiesStr.append(cookie.name).append("=").append(cookie.value).append("; ");
+        }
+
+        // In theory, you only need the JSESSIONID, sis-cookie, appName, and tomcat-cookie, so this would be more efficient
+
+        /*
+        for (Cookie cookie : cookies) {
+            if (cookie.name.equals("JSESSIONID") || cookie.name.equals("sis-cookie") || cookie.name.equals("appName")) cookiesStr.append(cookie.name).append("=").append(cookie.value).append("; ");
+            else if (cookie.name.equals("tomcat-cookie")) {
                 cookiesStr.append(cookie.name).append("=").append(cookie.value).append(";");
                 break;
             }
         }
+         */
+
         page.close();
 
         OkHttpClient client = new OkHttpClient();
@@ -85,6 +95,7 @@ public class Backend {
         try (okhttp3.Response response = client.newCall(getResponsiveSchedule).execute()) {
             JSONArray responsiveSessions = new JSONArray(Objects.requireNonNull(response.body(),
                     "Null return from responsiveSchedule endpoint for " + user.getEmail()).string());
+            // Loops through Ac-Lab mods
             outer:
             for (int i = 0; i < responsiveSessions.length(); i++) {
                 Selection selection = responsiveSessions.getJSONObject(i).getString("sessionName").charAt(6) == '1' ?
@@ -96,6 +107,7 @@ public class Backend {
                 if (!responsiveSessions.getJSONObject(i).getBoolean("sessionOpen")) continue;
                 int offeringID = -1; //Will hold ID of session chosen by user
 
+                //Loops through Ac-Lab sign up options
                 for (int j = 0; j < offeringsArray.length(); j++){
 
                     //Non 0 roster ID indicates the user has signed up for the ac-lab
@@ -105,11 +117,16 @@ public class Backend {
                     String teacherDisplay = offeringsArray.getJSONObject(j).getString("teacherDisplay");
 
                     //Can't just break when below conditional is met, the loop has to finish to check each rosterID equals 0
-                    if (offeringName.equalsIgnoreCase(selection.getOfferingName()) && teacherDisplay.equalsIgnoreCase(selection.getTeacherDisplay()))
+                    if (offeringName.equalsIgnoreCase(selection.getOfferingName()) && teacherDisplay.equalsIgnoreCase(selection.getTeacherDisplay())) {
+                        if (offeringsArray.getJSONObject(j).getInt("maxStudents") - offeringsArray.getJSONObject(j).getInt("currentStudents") == 0) {
+                            eventLogger.logException("Sign up failure:" + selection.getOfferingName() + ", " + selection.getTeacherDisplay() + " unavailable");
+                            continue outer;
+                        }
                         offeringID = offeringsArray.getJSONObject(j).getInt("responsiveOfferingID");
+                    }
 
                 }
-                if (offeringID == -1) System.out.println("Responsive Offering Not Found"); //Replace with something better
+                if (offeringID == -1) eventLogger.logException("Responsive offering not found: " + selection.getOfferingName() + ", " + selection.getTeacherDisplay());
                 else signUp(user.getEmail(), responsiveSessions.getJSONObject(i).getInt("responsiveSessionID"), offeringID, cookiesStr.toString());
             }
         }
