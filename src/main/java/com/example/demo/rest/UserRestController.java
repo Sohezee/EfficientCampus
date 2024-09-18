@@ -105,7 +105,7 @@ public class UserRestController {
             throw new InvalidCredentialsException("Email and password must be provided");
         }
         for (int i = 0; i < attempts; i++) {
-            try (BrowserManager browser = new BrowserManager(true)) {
+            try (BrowserManager browser = new BrowserManager(false)) {
                 if (browser.pageSetup(email, password) != null) return true;
             }
         }

@@ -11,6 +11,10 @@ public class BrowserManager implements AutoCloseable  {
     private final EventLogger eventLogger = new EventLogger(BrowserManager.class);
     private final Playwright playwright ;
     private final Browser browser;
+    private final BrowserContext browserContext; // Add a field to manage the browser context
+
+    // Define the User-Agent string to spoof as a Windows browser
+    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36";
 
     public BrowserManager() {
         this(true);  // Default to headless
@@ -19,6 +23,7 @@ public class BrowserManager implements AutoCloseable  {
     public BrowserManager(boolean isHeadless) {
         this.playwright = Playwright.create();
         this.browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(isHeadless));
+        this.browserContext = browser.newContext(new Browser.NewContextOptions().setUserAgent(USER_AGENT));
     }
 
     public synchronized Page pageSetup(String userEmail, String userPassword, int attempts) {
@@ -31,7 +36,7 @@ public class BrowserManager implements AutoCloseable  {
 
     public synchronized Page pageSetup(String userEmail, String userPassword) {
         try {
-            Page page = browser.newPage();
+            Page page = browserContext.newPage();
             page.navigate("https://rockwoodmo.infinitecampus.org/campus/portal/students/rockwood.jsp");
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Login with RSD Google Account")).click();
@@ -50,9 +55,6 @@ public class BrowserManager implements AutoCloseable  {
             return page;
 
         }
-        catch (TimeoutError error) {
-            return null;
-        }
         catch (Exception e) {
             eventLogger.logException(e);
             return null;
@@ -62,6 +64,9 @@ public class BrowserManager implements AutoCloseable  {
 
     @Override
     public void close() {
+        if (browserContext != null) {
+            browserContext.close();
+        }
         if (browser != null) {
             browser.close();
         }

@@ -30,7 +30,7 @@ import java.util.Objects;
 @Service
 public class Backend {
     private final EncryptionService encryptionService;
-    BrowserManager browser = new BrowserManager();
+    BrowserManager browser = new BrowserManager(false);
     EventLogger eventLogger = new EventLogger(Backend.class);
 
     private UserRepository userRepository;
