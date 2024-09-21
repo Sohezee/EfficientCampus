@@ -1,7 +1,5 @@
 # EfficientCampus <img src="src/main/resources/static/logo192.png" width="70" height="70" align="center">
 
----
-
 EfficientCampus is a full-stack, open-source application built with **Spring** to automatically sign up users for their preferred Ac-Lab sessions offered in certain RSDMO high schools.
 
 ## **Features**
