@@ -41,7 +41,7 @@ public class Backend {
         this.encryptionService = encryptionService;
     }
 
-    @Scheduled(cron = "0 1 0 * * ?", zone = "America/Chicago")
+    @Scheduled(cron = "0 5 0 * * ?", zone = "America/Chicago")
     public void signUpUsers() {
         List<User> users = userRepository.findAll();
         List<User> failed = new ArrayList<>();
