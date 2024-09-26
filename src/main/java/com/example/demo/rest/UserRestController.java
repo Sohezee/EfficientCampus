@@ -42,7 +42,9 @@ public class UserRestController {
         if(userService.findAll().stream().anyMatch(dbUser -> dbUser.getEmail().equals(user.getEmail()))) throw new EmailExistsException(user.getEmail());
         user.setId(0);
         user.setPassword(encryptionService.encrypt(user.getPassword()));
-        return userService.saveUser(user);
+        User returnUser = userService.saveUser(user);
+        returnUser.setPassword(encryptionService.decrypt(returnUser.getPassword()));
+        return returnUser;
     }
 
     @PutMapping("/users")

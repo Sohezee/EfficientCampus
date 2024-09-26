@@ -30,8 +30,9 @@ import java.util.Objects;
 @Service
 public class Backend {
     private final EncryptionService encryptionService;
-    BrowserManager browser = new BrowserManager(false);
     EventLogger eventLogger = new EventLogger(Backend.class);
+    BrowserManager browser;
+
 
     private UserRepository userRepository;
 
@@ -43,6 +44,7 @@ public class Backend {
 
     @Scheduled(cron = "0 5 0 * * ?", zone = "America/Chicago")
     public void signUpUsers() {
+        browser  = new BrowserManager(false);
         List<User> users = userRepository.findAll();
         List<User> failed = new ArrayList<>();
         for(User user: users) {
