@@ -17,10 +17,10 @@ public class BrowserManager implements AutoCloseable  {
     private final Playwright playwright ;
     private final Browser browser;
     private final BrowserContext browserContext; // Add a field to manage the browser context
-    private final CaptchaSolver captchaSolver = new CaptchaSolver();
+    private final Solver solver = new Solver();
     FileDeleter fileDeleter = new FileDeleter("src/main/screenshots");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-    private static int num = 0; // Appended to name of captcha screenshot file to ensure distinction
+    private static int num = 0; // Appended to name of screenshot file to ensure distinction
 
     // Define the User-Agent string to spoof as a Windows browser
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36";
@@ -46,8 +46,9 @@ public class BrowserManager implements AutoCloseable  {
 
     public synchronized Page pageSetup(String userEmail, String userPassword) {
         Normal captcha = null;
+        Page page = null;
         try {
-            Page page = browserContext.newPage();
+            page = browserContext.newPage();
             page.navigate("https://rockwoodmo.infinitecampus.org/campus/portal/students/rockwood.jsp");
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Login with RSD Google Account")).click();
@@ -60,7 +61,7 @@ public class BrowserManager implements AutoCloseable  {
             num++;
 
             page.locator("#captchaimg").screenshot(new Locator.ScreenshotOptions().setPath(Paths.get("src/main/screenshots/" + file)));
-            captcha = captchaSolver.solveCaptcha(file);
+            captcha = solver.solveCaptcha(file);
             String solution = captcha.getCode();
 
             page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Type the text you hear or see")).fill(solution);
@@ -77,13 +78,20 @@ public class BrowserManager implements AutoCloseable  {
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(Pattern.compile("Sign in|Next"))).click();
             page.waitForURL(Pattern.compile("https://rockwoodmo\\.infinitecampus\\.org/campus/nav-wrapper/student/portal/student/home.*"), new Page.WaitForURLOptions().setTimeout(25000));
             fileDeleter.deleteAllFilesInDirectory();
-            captchaSolver.solver.report(captcha.getId(), true);
+            solver.solver.report(captcha.getId(), true);
             return page;
         }
         catch (Exception e) {
+            if  (page != null) {
+                ZonedDateTime nowCST = ZonedDateTime.now(ZoneId.of("America/Chicago"));
+                String errorScreenshot = "Error-" + nowCST.format(formatter)  + ".png";
+                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(("/root/Pictures/" + errorScreenshot))));
+                page.close();
+            }
+
             if (captcha != null && !captcha.getCode().isEmpty()){
                 try {
-                    captchaSolver.solver.report(captcha.getId(), false);
+                    solver.solver.report(captcha.getId(), false);
                 } catch (Exception ex) {
                     eventLogger.logException(ex);
                 }

@@ -3,14 +3,14 @@ package com.example.demo.util;
 import com.twocaptcha.TwoCaptcha;
 import com.twocaptcha.captcha.Normal;
 
-public class CaptchaSolver {
+public class Solver {
 
     public String key;
 
-    private final EventLogger eventLogger = new EventLogger(CaptchaSolver.class);
+    private final EventLogger eventLogger = new EventLogger(Solver.class);
     public TwoCaptcha solver;
 
-    public CaptchaSolver() {
+    public Solver() {
         solver = new TwoCaptcha(PropertiesLoader.getProperty("captcha.key"));
         key = PropertiesLoader.getProperty("captcha.key");
     }

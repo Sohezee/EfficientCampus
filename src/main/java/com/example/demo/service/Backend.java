@@ -44,14 +44,17 @@ public class Backend {
 
     @Scheduled(cron = "0 5 0 * * ?", zone = "America/Chicago")
     public void signUpUsers() {
-        browser  = new BrowserManager(false);
         List<User> users = userRepository.findAll();
         List<User> failed = new ArrayList<>();
         for(User user: users) {
+            browser  = new BrowserManager(false);
             if (!signUpAll(user,3)) failed.add(user);
+            browser.close();
         }
         for(User user: failed) {
+            browser  = new BrowserManager(false);
             if (!signUpAll(user,10)) eventLogger.logException("CRITICAL FAILURE: " + user.getEmail() + " NOT SIGNED UP");
+            browser.close();
         }
     }
 

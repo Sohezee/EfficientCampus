@@ -12,7 +12,7 @@ You can access its deployment [here](https://www.efficientcampus.org)
 ## **Technology Stack**
 - **Backend**: Spring, Hibernate, MySQL
 - **Frontend**: React
-- **Automation**: Playwright, 2Captcha
+- **Automation**: Playwright
 - **HTTP Client**: OkHttp
 
 ## **Getting Started**
@@ -76,20 +76,15 @@ spring.datasource.url=jdbc:mysql://localhost:3306/user_directory
 spring.datasource.username=YOUR_USERNAME
 spring.datasource.password=YOUR_PASSWORD
 
-# 2Captcha API key
-captcha.key=YOUR_2CAPTCHA_API_KEY
 
 # Encryption key for sensitive data
 encryption.secret.key=YOUR_256_BIT_AES_KEY
 ```
 
 > **Note:**
-> - Replace `YOUR_USERNAME`, `YOUR_PASSWORD`, `YOUR_2CAPTCHA_API_KEY`, and `YOUR_256_BIT_AES_KEY` with the actual values.
+> - Replace `YOUR_USERNAME`, `YOUR_PASSWORD`, and `YOUR_256_BIT_AES_KEY` with the actual values.
 > - Ensure that your encryption key is exactly 256 bits (32 characters).
 
-#### **5. 2Captcha Integration**
-
-You will need to purchase credits for 2Captcha in order to handle CAPTCHA challenges. After obtaining the API key, add it to the `application.properties` file as shown above.
 
 #### **6. Build and Run the Application**
 
